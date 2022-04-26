@@ -14,10 +14,10 @@ function valida_nombre($nombre) {
     return $retorno;
 }
 function valida_telefono(&$tel,$nombre,$agenda) {
-    
+    //cargamos el valor del campo teléfono 
         $tel = filter_input(INPUT_POST, 'telefono', FILTER_SANITIZE_STRING);
         if ($tel == "") {
-            
+            //si ya existe en la agenda
             if (isset($agenda[$nombre])) { 
                 return false;
             } else {
@@ -25,31 +25,31 @@ function valida_telefono(&$tel,$nombre,$agenda) {
             }
         } 
         $expresion ="#^[+0-9][0-9]*$#";
-        $ok = preg_match($expresion, $tel); 
-        if ($ok) { // Teléfono contiene sólo números
+        $ok = preg_match($expresion, $tel); //sólo caracteres numéricos
+        if ($ok) { 
             return false;
-        } else { // el campo teléfono  no es válido
-            return "El campo teléfono puede iniciar con el caracter \'+\' y solo puede contener números";
+        } else { // 
+            return "El campo teléfono pued contener solo  números y eventaulmente +";
         }
     }
 
 if (isset($_POST['f1'])) {
-
+// RF2 Leer valores del formulario (nombre, tel, agenda)
     $nombre = filter_input(INPUT_POST, "nombre", FILTER_SANITIZE_STRING);
-    $agenda = $_POST['agenda'] ?? []; 
+    $agenda = $_POST['agenda'] ?? []; // array $agenda del formulario oculto
     var_dump($agenda);
     $disabled = "";
-    if (count($agenda)==0) 
+    if (count($agenda)==0) //si $agenda está vacía, desabilito el botón de borrar
         $disabled="disabled";
-
+//RF3 Vamos a establecer una variable de error
     $error = false;
     if ($_POST['f1']<>'Borrar') { 
-        $error = valida_nombre($nombre);   
+        $error = valida_nombre($nombre);   // valido 
         if (!$error)
-            $error = valida_telefono($tel, $nombre, $agenda); 
+            $error = valida_telefono($tel, $nombre, $agenda); //valido si el teléfono es numérico
     }
     if (!$error) {
-       
+        
         $opcion = $_POST['f1'];
         switch ($opcion) {
             case "Borrar":
@@ -59,7 +59,7 @@ if (isset($_POST['f1'])) {
                 $disabled="disabled";
                 break;
             case "Añadir":
-                //1
+               
                   if ($tel == "") {
                      unset ($agenda[$nombre]); //Elimino un contacto
                     $msj = "Se ha elmininado el contacto de <span style='color:green'>$nombre</span>";
@@ -140,7 +140,7 @@ if (isset($_POST['f1'])) {
     </div>
     <hr>
     <?php
-    // Imprimo el $msj con la acción realizada
+    // $msj con la acción realizada
     if (isset($msj))
         echo "<h4>$msj</h4>";
     ?>
